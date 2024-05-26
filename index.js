@@ -1,4 +1,3 @@
-// const config = require('config')
 const cors = require('cors')
 const express = require("express")
 const mongoDB = require('./config/db')
@@ -11,8 +10,8 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
-if(!process.env.jwtPrivateKey){
-    console.error('FATAL ERROR: jwtPrivateKey is not define.');
+if(!process.env.JWT_PRIVATE_KEY){
+    console.error('FATAL ERROR: JWT_PRIVATE_KEY is not define.');
     process.exit(1);
 }
 
