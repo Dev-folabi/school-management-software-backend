@@ -40,6 +40,5 @@ const user = mongoose.model("User", userSchema);
 
 // Export the model and validation function
 module.exports = {
-  User: user,
-  validateUser: validateUser,
+  User: user
 };
