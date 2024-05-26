@@ -26,9 +26,14 @@ app.use('/api/login', login)
 
 
 
-const Port = process.env.PORT
 
-mongoDB()
-app.listen(Port, ()=>{
-    console.log(`server running on port ${Port}`)
-})
+const port = process.env.PORT || 3000; 
+
+mongoDB().then(() => {
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
+}).catch(error => {
+    console.error('Failed to connect to MongoDB', error);
+    process.exit(1);
+});
