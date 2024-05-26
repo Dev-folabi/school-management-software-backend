@@ -11,10 +11,10 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
-// if(!config.get(`${process.env.jwtPrivateKey}`)){
-//     console.error('FATAL ERROR: jwtPrivateKey is not define.');
-//     process.exit(1);
-// }
+if(!config.get(`${process.env.jwtPrivateKey}`)){
+    console.error('FATAL ERROR: jwtPrivateKey is not define.');
+    process.exit(1);
+}
 
 
 // const dbUsername = config.get('username');
