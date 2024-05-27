@@ -1,8 +1,9 @@
 const cors = require('cors');
 const express = require('express');
 const mongoDB = require('./config/db');
-const register = require('./routes/user/admin.route');
+const admin = require('./routes/user/admin.route');
 const login = require('./routes/user/login.route');
+const teacher = require('./routes/user/teacher.route')
 
 require('dotenv').config();
 
@@ -16,7 +17,8 @@ if (!process.env.JWT_PRIVATE_KEY) {
 }
 
 
-app.use('/api/admin', register);
+app.use('/api/admin', admin);
+app.use('/api/teacher', teacher )
 
 // // Login route
 // app.use('/api/login', login);
