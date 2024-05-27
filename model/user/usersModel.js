@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const options = { discriminatorKey: 'role', collection: 'user' };
@@ -42,6 +41,4 @@ userSchema.methods.generateAuthToken = function () {
 // Create the model
 const User = mongoose.model('User', userSchema);
 
-module.exports = {
-  User,
-};
+module.exports = User;
