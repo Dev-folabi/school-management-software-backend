@@ -1,9 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 const mongoDB = require('./config/db');
-const admin = require('./routes/user/admin.route');
-const login = require('./routes/user/login.route');
-const teacher = require('./routes/user/teacher.route')
+
 
 require('dotenv').config();
 
@@ -17,11 +15,10 @@ if (!process.env.JWT_PRIVATE_KEY) {
 }
 
 
-app.use('/api/admin', admin);
-app.use('/api/teacher', teacher )
-
-// // Login route
-// app.use('/api/login', login);
+app.use('/api/admin', require('./routes/user/admin.route'));
+app.use('/api/staff', require('./routes/user/staff.route'));
+app.use('/api/role', require('./routes/role.route'));
+app.use('/api/login', require('./routes/user/login.route'));
 
 const port = process.env.PORT || 3000;
 

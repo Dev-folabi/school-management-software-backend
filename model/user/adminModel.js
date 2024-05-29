@@ -5,6 +5,7 @@ const adminSchema = new mongoose.Schema({
   
 });
 
-const Admin = User.discriminator('Admin', adminSchema);
+adminSchema.add(User.schema)
+const Admin = mongoose.model('Admin', adminSchema);
 
 module.exports = Admin;

@@ -1,7 +1,7 @@
 const Admin = require('../../model/user/adminModel');
 const User = require('../../model/user/usersModel');
 const bcrypt = require('bcrypt');
-const validateUser = require('../validator/userValidate');
+const validateUser = require('../validator/staffValidate');
 
 const createAdmin = async (req, res) => {
     try {
@@ -20,12 +20,14 @@ const createAdmin = async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
-            role: 'admin' // Ensure the role is set
+            role: 'admin' 
         });
 
         await admin.save();
 
-        res.status(201).json({ message: "Admin created successfully", id: admin._id, email: admin.email });
+        const token = admin.generateAuthToken()
+
+        res.status(201).json({ message: "Admin created successfully", token, id: admin._id, email: admin.email });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -34,6 +36,7 @@ const createAdmin = async (req, res) => {
 const getAdmins = async (req, res) => {
     try {
         const admins = await Admin.find({}).select('-password'); 
+        if(!admins) return res.status(400).json('No Admin found')
         res.status(200).json(admins);
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
-
-const options = { discriminatorKey: 'role', collection: 'user' };
-
+// const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -22,23 +20,32 @@ const userSchema = new mongoose.Schema({
     minlength: 6,
     required: true,
   },
-  role: {
+  gender: {
     type: String,
     required: true,
-    enum: ['super_admin', 'admin', 'teacher', 'accountant', 'librarian', 'student', 'parent'],
+  },
+  address: {
+    type: String,
+  },
+  role: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+  },
+  status: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-}, options);
+});
 
-userSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ _id: this._id, role: this.role }, process.env.JWT_PRIVATE_KEY);
-  return token;
-};
+// userSchema.methods.generateAuthToken = function () {
+//   const token = jwt.sign({ _id: this._id, role: this.role }, process.env.JWT_PRIVATE_KEY);
+//   return token;
+// };
 
-// Create the model
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
