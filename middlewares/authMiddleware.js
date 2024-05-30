@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-
 const auth = (req, res, next) => {
   const token = req.header("x-auth-token");
   if (!token) return res.status(401).send("Access denied. Token not provided");
@@ -16,13 +15,13 @@ const auth = (req, res, next) => {
 
 function authorize(...roles) {
   return (req, res, next) => {
-    
-    if (!roles.includes(req.user.role)) {
+    const userRole = req.user.role.role; 
+
+    if (!roles.includes(userRole)) {
       return res.status(403).json({ msg: 'Role not authorized' });
     }
     next();
   };
 }
 
-
-module.exports = {auth, authorize}
+module.exports = { auth, authorize };

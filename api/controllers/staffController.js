@@ -41,6 +41,7 @@ const createStaff = async (req, res) => {
         });
 
         await staff.save();
+        await staff.populate('role')
         const token = staff.generateAuthToken();
         res.status(201).json({ message: "User created successfully", token, id: staff._id, email: staff.email });
     } catch (err) {

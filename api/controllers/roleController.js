@@ -1,5 +1,3 @@
-const express = require('express');
-const router = express.Router();
 const Role = require('../../model/roleModel');
 
 const createRole = async (req, res) => {
@@ -19,53 +17,57 @@ const createRole = async (req, res) => {
     }
 };
 
-const getRoles = async (req, res) =>{
-    try{
-const roles = await Role.find({})
+const getRoles = async (req, res) => {
+    try {
+        const roles = await Role.find({});
+        if (!roles || roles.length === 0) {
+            return res.status(400).json({ msg: 'No roles found' });
+        }
 
-if(!roles) return res.status(400).json('role empty')
-
-res.status(200).json({roles})
-
-    }
-    catch(err){
+        res.status(200).json(roles);
+    } catch (err) {
         res.status(500).json({ msg: 'Server error', error: err.message });
     }
-}
+};
 
 const updateRole = async (req, res) => {
+    const { id } = req.params;
+    const { role } = req.body;
 
     try {
+        const existingRole = await Role.findById(id);
+        if (!existingRole) {
+            return res.status(404).json({ error: 'Role not found' });
+        }
 
-        const role = await Role.findOne(req.body.role);
-        if (!role) return res.status(404).json({ error: "role not found" });
+        existingRole.role = role;
+        const updatedRole = await existingRole.save();
 
-
-        const updatedRole = await Role.findOneAndUpdate(role, updateFields, { new: true })
         res.status(200).json(updatedRole);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
 
-const deleteRole = async (req, res)=> {
+const deleteRole = async (req, res) => {
+    const { id } = req.params;
+
     try {
+        const role = await Role.findById(id);
+        if (!role) {
+            return res.status(404).json({ error: 'Role not found' });
+        }
 
-        const role = await Role.findOne(req.body.role);
-        if (!role) return res.status(404).json({ error: "role not found" });
-
-
-        const updatedRole = await Role.findOneAndUpdate(id, updateFields, { new: true })
-        res.status(200).json(updatedRole);
+        await Role.findByIdAndDelete(id);
+        res.status(200).json({ message: 'Role deleted successfully' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-
-}
+};
 
 module.exports = {
     createRole,
     getRoles,
-}
-
-
+    updateRole,
+    deleteRole
+};

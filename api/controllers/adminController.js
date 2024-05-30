@@ -1,5 +1,5 @@
 const Admin = require('../../model/user/adminModel');
-const User = require('../../model/user/usersModel');
+const Role = require('../../model/roleModel')
 const bcrypt = require('bcrypt');
 const validateUser = require('../validator/staffValidate');
 
@@ -8,9 +8,12 @@ const createAdmin = async (req, res) => {
         const { error } = validateUser(req.body);
         if (error) return res.status(400).json({ error: error.details[0].message });
 
-        const { firstName, lastName, email, password } = req.body;
-        let existingUser = await User.findOne({ email });
+        const { firstName, lastName, email, password, gender, address, role, status } = req.body;
+
+        let existingUser = await Admin.findOne({ email });
         if (existingUser) return res.status(400).json({ error: "User already exists" });
+
+        const adminRole = await Role.findOne({role: 'Admin'})
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -20,11 +23,14 @@ const createAdmin = async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
-            role: 'admin' 
+            gender,
+            address, 
+            role: adminRole._id,
+            status : true
         });
 
         await admin.save();
-
+        await admin.populate('role')
         const token = admin.generateAuthToken()
 
         res.status(201).json({ message: "Admin created successfully", token, id: admin._id, email: admin.email });
@@ -59,11 +65,16 @@ const updateAdmin = async (req, res) => {
 
     try {
        
-        const { password, ...updateFields } = req.body;
+        const { password, role, ...updateFields } = req.body;
 
         const admin = await Admin.findById(id);
         if (!admin) return res.status(404).json({ error: "Admin not found" });
 
+        const adminRole = await Role.findOne({ role });
+
+        if (!adminRole) {
+            return res.status(400).send({ error: 'Invalid role.' });
+        }else{ updateFields.role =  adminRole._id }
 
         const updatedAdmin = await Admin.findByIdAndUpdate(id, updateFields, { new: true }).select('-password');
         res.status(200).json(updatedAdmin);
